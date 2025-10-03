@@ -1,0 +1,94 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FinanceApp.Views.AddTransactionPage"
+             BackgroundColor="#FDCFFA">
+
+    <ScrollView>
+        <Grid Padding="20">
+            <Frame BackgroundColor="White"
+               Padding="20"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               WidthRequest="600"
+               HasShadow="True">
+
+                <StackLayout Spacing="20">
+
+                    <!-- Page Title -->
+                    <Label Text="Add Transaction"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="#4E56C0"/>
+
+                    <!-- Account Field -->
+                    <Entry x:Name="accountEntry" 
+                       Placeholder="Account Name" 
+                       TextColor="#4E56C0"
+                       BackgroundColor="#F0F0F0"
+                       HeightRequest="40"/>
+                    <Label x:Name="accountErrorLabel" TextColor="Red" FontSize="12" IsVisible="False"/>
+
+                    <!-- DatePicker -->
+                    <DatePicker x:Name="datePicker" 
+                            BackgroundColor="#F0F0F0"
+                            TextColor="#4E56C0"/>
+
+                    <!-- Radio buttons above amount entry -->
+                    <StackLayout Orientation="Horizontal" Spacing="20" HorizontalOptions="Start">
+                        <!-- Credit Radio -->
+                        <Frame x:Name="CreditRadioFrame" Padding="5" BackgroundColor="#E0D9FF" CornerRadius="5" HeightRequest="40" HasShadow="True">
+                            <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                <Image Source="credit_icon.png" HeightRequest="20" WidthRequest="20"/>
+                                <RadioButton x:Name="CreditRadio"
+                                         Content="Credit"
+                                         GroupName="TransactionType"
+                                         CheckedChanged="OnRadioCheckedChanged"
+                                         FontAttributes="Bold"
+                                         TextColor="#4E56C0"
+                                         VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </Frame>
+                        <!-- Debit Radio -->
+                        <Frame x:Name="DebitRadioFrame" Padding="5" BackgroundColor="#FFE0F0" CornerRadius="5" HeightRequest="40" HasShadow="True">
+                            <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                <Image Source="debit_icon.png" HeightRequest="20" WidthRequest="20"/>
+                                <RadioButton x:Name="DebitRadio"
+                                         Content="Debit"
+                                         GroupName="TransactionType"
+                                         CheckedChanged="OnRadioCheckedChanged"
+                                         FontAttributes="Bold"
+                                         TextColor="#4E56C0"
+                                         VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </Frame>
+                    </StackLayout>
+
+                    <!-- Amount Entry -->
+                    <Entry x:Name="amountEntry"
+                       Placeholder="Enter Amount"
+                       Keyboard="Numeric"
+                       BackgroundColor="#F0F0F0"
+                       TextColor="#4E56C0"
+                       HeightRequest="40"/>
+                    <Label x:Name="amountErrorLabel" TextColor="Red" FontSize="12" IsVisible="False"/>
+
+                    <!-- Remarks Last -->
+                    <Entry x:Name="remarksEntry" Placeholder="Remarks (Optional)" 
+                       BackgroundColor="#F0F0F0"
+                       TextColor="#4E56C0"
+                       HeightRequest="40"/>
+                    <Label x:Name="remarksErrorLabel" TextColor="Red" FontSize="12" IsVisible="False"/>
+
+                    <!-- Save / Add Record Button -->
+                    <Button x:Name="recordButton"
+                        Text="Add Record"
+                        BackgroundColor="#4E56C0"
+                        TextColor="White"
+                        CornerRadius="5"
+                        Clicked="OnSaveClicked"/>
+                </StackLayout>
+            </Frame>
+        </Grid>
+    </ScrollView>
+</ContentPage>

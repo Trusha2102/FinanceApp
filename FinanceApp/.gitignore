@@ -1,0 +1,61 @@
+﻿# Build results
+[Bb]in/
+[Oo]bj/
+Debug/
+Release/
+x64/
+x86/
+build/
+AppPackages/
+*.appx
+*.appxbundle
+*.appxupload
+
+# VS for Mac
+.vscode/
+.idea/
+*.userprefs
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS stuff
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# MAUI / Xamarin
+*.apk
+*.aab
+*.ipa
+*.dSYM/
+*.xcarchive
+*.xcuserdata/
+*.maui.sh
+*.lock.json
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+*.nuget.props
+*.nuget.targets
+project.lock.json
+packages/
+*.dll
+*.exe
+
+# Rider / JetBrains
+.idea/
+*.iml
+
+# Other
+*.tmp
+*.bak
+*.swp
