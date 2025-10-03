@@ -10,6 +10,8 @@ public partial class AddTransactionPage : ContentPage
 {
     private readonly TransactionService _service;
 
+    public AddTransactionPage() : this(App.TransactionService) { }
+
     public AddTransactionPage(TransactionService service)
     {
         InitializeComponent();
@@ -30,7 +32,7 @@ public partial class AddTransactionPage : ContentPage
             }
         };
 
-        // Amount input validation (numbers + max 2 decimals)
+        // Amount input validation
         amountEntry.TextChanged += (s, e) =>
         {
             string text = amountEntry.Text;
@@ -50,7 +52,6 @@ public partial class AddTransactionPage : ContentPage
         recordButton.Released += async (s, e) => await recordButton.ScaleTo(1, 50);
     }
 
-    // Radio button selection with proper readable colors
     private void OnRadioCheckedChanged(object sender, CheckedChangedEventArgs e)
     {
         if (CreditRadio.IsChecked)
@@ -88,10 +89,7 @@ public partial class AddTransactionPage : ContentPage
             accountErrorLabel.IsVisible = true;
             hasError = true;
         }
-        else
-        {
-            accountErrorLabel.IsVisible = false;
-        }
+        else accountErrorLabel.IsVisible = false;
 
         // Amount validation
         if (!decimal.TryParse(amountEntry.Text, out decimal amount) || amount <= 0)
@@ -100,10 +98,7 @@ public partial class AddTransactionPage : ContentPage
             amountErrorLabel.IsVisible = true;
             hasError = true;
         }
-        else
-        {
-            amountErrorLabel.IsVisible = false;
-        }
+        else amountErrorLabel.IsVisible = false;
 
         // Radio validation
         string transactionType = null;
@@ -117,20 +112,14 @@ public partial class AddTransactionPage : ContentPage
             hasError = true;
         }
 
-        // Date validation
-        DateTime? selectedDate = datePicker.Date;
-        if (selectedDate == null)
-        {
-            await DisplayAlert("Error", "Please select a date", "OK");
-            hasError = true;
-        }
+        DateTime selectedDate = (DateTime)datePicker.Date;
 
         if (hasError) return;
 
         // Create transaction
         var transaction = new Transaction
         {
-            Date = selectedDate.Value,
+            Date = selectedDate,
             AccountName = accountEntry.Text,
             Debit = transactionType == "Debit" ? amount : 0,
             Credit = transactionType == "Credit" ? amount : 0,

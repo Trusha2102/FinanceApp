@@ -1,33 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SQLite;
-using FinanceApp.Models;
+﻿using FinanceApp.Models;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FinanceApp.Services;
 
 public class TransactionService
 {
-    private readonly SQLiteAsyncConnection _db;
+    private readonly ObservableCollection<Transaction> _transactions = new();
+    private int _nextId = 1;
 
-    public TransactionService(string dbPath)
+    public ObservableCollection<Transaction> GetAllTransactions() => _transactions;
+
+    public void AddTransaction(Transaction transaction)
     {
-        _db = new SQLiteAsyncConnection(dbPath);
-        _db.CreateTableAsync<Transaction>().Wait();
+        transaction.Id = _nextId++;
+        _transactions.Add(transaction);
     }
 
-    public Task<List<Transaction>> GetTransactionsAsync() =>
-        _db.Table<Transaction>().ToListAsync();
-
-    public Task<int> SaveTransactionAsync(Transaction transaction)
+    public void UpdateTransaction(Transaction transaction)
     {
-        if (transaction.Id != 0)
-            return _db.UpdateAsync(transaction);
-        else
-            return _db.InsertAsync(transaction);
+        var existing = _transactions.FirstOrDefault(t => t.Id == transaction.Id);
+        if (existing != null)
+        {
+            existing.Date = transaction.Date ?? System.DateTime.Today;
+            existing.AccountName = transaction.AccountName;
+            existing.Debit = transaction.Debit;
+            existing.Credit = transaction.Credit;
+            existing.Remarks = transaction.Remarks;
+        }
     }
 
-    public Task<int> DeleteTransactionAsync(Transaction transaction) =>
-        _db.DeleteAsync(transaction);
+    public void DeleteTransaction(int id)
+    {
+        var transaction = _transactions.FirstOrDefault(t => t.Id == id);
+        if (transaction != null)
+            _transactions.Remove(transaction);
+    }
+
+    // Async wrapper for Add (optional)
+    public Task SaveTransactionAsync(Transaction transaction)
+    {
+        AddTransaction(transaction);
+        return Task.CompletedTask;
+    }
 }
-

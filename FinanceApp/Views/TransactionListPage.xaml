@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FinanceApp.Views.TransactionListPage"
+             BackgroundColor="White">
+    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+        <Label Text="Transaction List (Coming Soon)" 
+               FontSize="20" 
+               TextColor="#4E56C0"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"/>
+    </StackLayout>
+</ContentPage>

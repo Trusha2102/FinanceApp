@@ -1,15 +1,15 @@
-﻿using FinanceApp.Views;
-using FinanceApp.Services;
+﻿using FinanceApp.Services;
 
 namespace FinanceApp;
 
 public partial class App : Application
 {
-    public App(TransactionService service)
-    {
-        InitializeComponent();
+    // Shared service for all pages
+    public static TransactionService TransactionService { get; } = new TransactionService();
 
-        // NavigationPage wraps the first page
-        MainPage = new NavigationPage(new AddTransactionPage(service));
+    public App()
+    {
+        InitializeComponent(); // ✅ Works because this matches App.xaml
+        MainPage = new AppShell();
     }
 }
