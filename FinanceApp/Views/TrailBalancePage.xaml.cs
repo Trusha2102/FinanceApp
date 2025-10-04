@@ -1,67 +1,97 @@
 ﻿using FinanceApp.Models;
 using FinanceApp.Services;
 using Microsoft.Maui.Controls;
-using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.ComponentModel;
 
 namespace FinanceApp.Views;
 
 public partial class TrialBalancePage : ContentPage
 {
     private readonly TransactionService _service;
+    private readonly ObservableCollection<AccountBalance> _balances = new();
 
-    public class AccountBalance
-    {
-        public string AccountName { get; set; } = string.Empty;
-        public decimal TotalDebit { get; set; }
-        public decimal TotalCredit { get; set; }
-    }
+    public ObservableCollection<AccountBalance> Balances => _balances;
+    public ObservableCollection<Transaction> Transactions { get; private set; }
 
-    public List<AccountBalance> AccountBalances { get; set; } = new();
+    public decimal TotalDebit { get; private set; }
+    public decimal TotalCredit { get; private set; }
 
-    public decimal TotalDebit { get; set; }
-    public decimal TotalCredit { get; set; }
+    public TrialBalancePage() : this(App.TransactionService) { }
 
-    public TrialBalancePage()
+    public TrialBalancePage(TransactionService service)
     {
         InitializeComponent();
-        _service = App.TransactionService;
+        _service = service;
 
-        CalculateBalances();
+        Transactions = _service.GetAllTransactions();
+
+        // Listen for new/deleted transactions
+        Transactions.CollectionChanged += (s, e) =>
+        {
+            // Subscribe to property changes for new transactions
+            if (e.NewItems != null)
+                foreach (Transaction t in e.NewItems)
+                    t.PropertyChanged += Transaction_PropertyChanged;
+
+            // Unsubscribe removed transactions
+            if (e.OldItems != null)
+                foreach (Transaction t in e.OldItems)
+                    t.PropertyChanged -= Transaction_PropertyChanged;
+
+            CalculateTrialBalance();
+        };
+
+        // Subscribe existing transactions
+        foreach (var t in Transactions)
+            t.PropertyChanged += Transaction_PropertyChanged;
+
+        CalculateTrialBalance();
         BindingContext = this;
     }
 
-    private void CalculateBalances()
+    private void Transaction_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        var grouped = new Dictionary<string, (decimal Debit, decimal Credit)>();
+        // Recalculate trial balance whenever any property of a transaction changes
+        CalculateTrialBalance();
+    }
 
-        foreach (var t in _service.GetAllTransactions())
+    private void CalculateTrialBalance()
+    {
+        _balances.Clear();
+        TotalDebit = 0;
+        TotalCredit = 0;
+
+        var grouped = Transactions.GroupBy(t => t.AccountName)
+                                  .Select(g => new AccountBalance
+                                  {
+                                      AccountName = g.Key,
+                                      TotalDebit = g.Sum(t => t.Debit),
+                                      TotalCredit = g.Sum(t => t.Credit)
+                                  });
+
+        foreach (var item in grouped)
         {
-            if (!grouped.ContainsKey(t.AccountName))
-                grouped[t.AccountName] = (0, 0);
-
-            var curr = grouped[t.AccountName];
-            curr.Debit += t.Debit;
-            curr.Credit += t.Credit;
-            grouped[t.AccountName] = curr;
+            _balances.Add(item);
+            TotalDebit += item.TotalDebit;
+            TotalCredit += item.TotalCredit;
         }
 
-        AccountBalances = grouped.Select(kvp => new AccountBalance
-        {
-            AccountName = kvp.Key,
-            TotalDebit = kvp.Value.Debit,
-            TotalCredit = kvp.Value.Credit
-        }).ToList();
+        if (balanceLabel != null)
+            balanceLabel.Text = TotalDebit == TotalCredit ? "Balanced ✅" : "Not Balanced ❌";
 
-        TotalDebit = AccountBalances.Sum(a => a.TotalDebit);
-        TotalCredit = AccountBalances.Sum(a => a.TotalCredit);
+        if (totalDebitLabel != null)
+            totalDebitLabel.Text = $"Total Debit: {TotalDebit:C}";
 
-        // Show balanced/unbalanced status
-        decimal currentBalance = TotalDebit - TotalCredit;
-        if (currentBalance == 0)
-            BalanceStatusLabel.Text = "✅ Balanced";
-        else
-            BalanceStatusLabel.Text = $"⚠️ Unbalanced! Current Balance: {currentBalance:C}";
+        if (totalCreditLabel != null)
+            totalCreditLabel.Text = $"Total Credit: {TotalCredit:C}";
     }
+}
+
+public class AccountBalance
+{
+    public string AccountName { get; set; }
+    public decimal TotalDebit { get; set; }
+    public decimal TotalCredit { get; set; }
 }

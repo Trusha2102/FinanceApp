@@ -3,7 +3,8 @@
              x:Class="FinanceApp.Views.AddTransactionPage"
              xmlns:sys="clr-namespace:System;assembly=netstandard"
              BackgroundColor="#FDCFFA"
-             xmlns:local="clr-namespace:FinanceApp.Views">
+             xmlns:local="clr-namespace:FinanceApp.Views"
+             Title="Finance App">
 
     <ScrollView>
         <Grid Padding="20">
@@ -26,6 +27,7 @@
                     <!-- Account Field -->
                     <Entry x:Name="accountEntry" 
                            Placeholder="Account Name" 
+                           PlaceholderColor="#7F8CAA"
                            TextColor="#4E56C0"
                            BackgroundColor="#F0F0F0"
                            HeightRequest="40"/>
@@ -70,6 +72,7 @@
                     <!-- Amount Entry -->
                     <Entry x:Name="amountEntry"
                            Placeholder="Enter Amount"
+                           PlaceholderColor="#7F8CAA"
                            Keyboard="Numeric"
                            BackgroundColor="#F0F0F0"
                            TextColor="#4E56C0"
@@ -78,6 +81,7 @@
 
                     <!-- Remarks Last -->
                     <Entry x:Name="remarksEntry" Placeholder="Remarks (Optional)" 
+                           PlaceholderColor="#7F8CAA"
                            BackgroundColor="#F0F0F0"
                            TextColor="#4E56C0"
                            HeightRequest="40"/>

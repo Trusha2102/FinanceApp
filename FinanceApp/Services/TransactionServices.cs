@@ -20,12 +20,14 @@ public class TransactionService
 
     public void UpdateTransaction(Transaction transaction)
     {
-        // Find the index of the existing transaction
-        var index = _transactions.IndexOf(_transactions.FirstOrDefault(t => t.Id == transaction.Id));
-        if (index >= 0)
+        var existing = _transactions.FirstOrDefault(t => t.Id == transaction.Id);
+        if (existing != null)
         {
-            // Replace the object in collection so UI refreshes automatically
-            _transactions[index] = transaction;
+            existing.Date = transaction.Date ?? System.DateTime.Today;
+            existing.AccountName = transaction.AccountName;
+            existing.Debit = transaction.Debit;
+            existing.Credit = transaction.Credit;
+            existing.Remarks = transaction.Remarks ?? string.Empty;
         }
     }
 
@@ -36,11 +38,7 @@ public class TransactionService
 
     public Task SaveTransactionAsync(Transaction transaction)
     {
-        if (transaction.Id == 0)
-            AddTransaction(transaction);
-        else
-            UpdateTransaction(transaction);
-
+        _transactions.Add(transaction);
         return Task.CompletedTask;
     }
 }

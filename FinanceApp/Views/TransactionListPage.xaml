@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FinanceApp.Views.TransactionListPage"
              BackgroundColor="#FDCFFA"
-             Title="Transactions">
+             Title="Finance App">
 
     <CollectionView x:Name="TransactionsCollectionView"
                     ItemsSource="{Binding Transactions}"

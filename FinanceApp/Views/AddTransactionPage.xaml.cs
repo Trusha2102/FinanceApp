@@ -9,25 +9,23 @@ namespace FinanceApp.Views;
 public partial class AddTransactionPage : ContentPage
 {
     private readonly TransactionService _service;
-    private readonly Transaction _editingTransaction; // For edit mode
+    private readonly Transaction _editingTransaction;
 
-    // For Add mode
+    // Add mode
     public AddTransactionPage() : this(App.TransactionService) { }
 
     public AddTransactionPage(TransactionService service)
     {
         InitializeComponent();
         _service = service;
-
         SetupValidation();
     }
 
-    // For Edit mode
+    // Edit mode
     public AddTransactionPage(TransactionService service, Transaction transaction) : this(service)
     {
         _editingTransaction = transaction;
 
-        // Pre-fill existing transaction values
         accountEntry.Text = transaction.AccountName;
         amountEntry.Text = (transaction.Debit > 0 ? transaction.Debit : transaction.Credit).ToString();
         remarksEntry.Text = transaction.Remarks ?? string.Empty;
@@ -38,12 +36,11 @@ public partial class AddTransactionPage : ContentPage
         else if (transaction.Credit > 0)
             CreditRadio.IsChecked = true;
 
-        recordButton.Text = "Update Record"; // Show edit mode
+        recordButton.Text = "Update Record"; // show edit mode
     }
 
     private void SetupValidation()
     {
-        // Remarks max length validation
         remarksEntry.TextChanged += (s, e) =>
         {
             if (e.NewTextValue?.Length > 60)
@@ -58,7 +55,6 @@ public partial class AddTransactionPage : ContentPage
             }
         };
 
-        // Amount input validation
         amountEntry.TextChanged += (s, e) =>
         {
             string text = amountEntry.Text;
@@ -73,7 +69,6 @@ public partial class AddTransactionPage : ContentPage
             }
         };
 
-        // Button press animation
         recordButton.Pressed += async (s, e) => await recordButton.ScaleTo(0.95, 50);
         recordButton.Released += async (s, e) => await recordButton.ScaleTo(1, 50);
     }
@@ -144,12 +139,12 @@ public partial class AddTransactionPage : ContentPage
 
         if (_editingTransaction != null)
         {
-            // Update existing transaction
+            // Update transaction
             _editingTransaction.Date = selectedDate;
             _editingTransaction.AccountName = accountEntry.Text;
             _editingTransaction.Debit = transactionType == "Debit" ? amount : 0;
             _editingTransaction.Credit = transactionType == "Credit" ? amount : 0;
-            _editingTransaction.Remarks = string.IsNullOrWhiteSpace(remarksEntry.Text) ? string.Empty : remarksEntry.Text;
+            _editingTransaction.Remarks = remarksEntry.Text ?? string.Empty;
 
             _service.UpdateTransaction(_editingTransaction);
 
@@ -159,14 +154,14 @@ public partial class AddTransactionPage : ContentPage
         }
         else
         {
-            // Add new transaction
+            // Add new
             var transaction = new Transaction
             {
                 Date = selectedDate,
                 AccountName = accountEntry.Text,
                 Debit = transactionType == "Debit" ? amount : 0,
                 Credit = transactionType == "Credit" ? amount : 0,
-                Remarks = string.IsNullOrWhiteSpace(remarksEntry.Text) ? string.Empty : remarksEntry.Text
+                Remarks = remarksEntry.Text ?? string.Empty
             };
 
             await _service.SaveTransactionAsync(transaction);
@@ -176,6 +171,6 @@ public partial class AddTransactionPage : ContentPage
                 "OK");
         }
 
-        await Navigation.PopAsync(); // Return to transaction list
+        await Navigation.PopAsync(); // return to list
     }
 }
