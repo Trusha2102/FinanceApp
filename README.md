@@ -25,8 +25,6 @@ FinanceApp is a simple cross-platform personal finance app built using **.NET MA
 * Validates required fields.
 * Users can save transactions for future reference.
 
-*Screenshot Placeholder: [Attach Screenshot]*
-
 ---
 
 ### 2. Transaction List
@@ -38,8 +36,6 @@ FinanceApp is a simple cross-platform personal finance app built using **.NET MA
 
   * **Edit**: Modify transaction details.
   * **Delete**: Remove unwanted transactions.
-
-*Screenshot Placeholder: [Attach Screenshot]*
 
 ---
 
@@ -54,8 +50,6 @@ FinanceApp is a simple cross-platform personal finance app built using **.NET MA
 
 * Automatically sums up debit and credit amounts.
 * Provides a visual confirmation of balance status.
-
-*Screenshot Placeholder: [Attach Screenshot]*
 
 ---
 
