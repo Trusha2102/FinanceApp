@@ -2,12 +2,37 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FinanceApp.Views.TrialBalancePage"
-             BackgroundColor="White">
-    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-        <Label Text="Trial Balance (Coming Soon)" 
-               FontSize="20" 
-               TextColor="#4E56C0"
+             BackgroundColor="#FDFDFD">
+
+    <StackLayout Padding="20" Spacing="10">
+        <Label Text="Trial Balance"
+               FontSize="24"
+               FontAttributes="Bold"
                HorizontalOptions="Center"
-               VerticalOptions="Center"/>
+               TextColor="#4E56C0" />
+
+        <CollectionView x:Name="trialBalanceCollectionView"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="80" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Text="{Binding AccountName}" Grid.Column="0"/>
+                        <Label Text="{Binding TotalDebit}" Grid.Column="1"/>
+                        <Label Text="{Binding TotalCredit}" Grid.Column="2"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label x:Name="balanceStatusLabel"
+               FontSize="18"
+               HorizontalOptions="Center"
+               TextColor="#4E56C0"/>
     </StackLayout>
 </ContentPage>

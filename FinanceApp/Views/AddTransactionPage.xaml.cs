@@ -9,7 +9,9 @@ namespace FinanceApp.Views;
 public partial class AddTransactionPage : ContentPage
 {
     private readonly TransactionService _service;
+    private readonly Transaction _editingTransaction; // For edit mode
 
+    // For Add mode
     public AddTransactionPage() : this(App.TransactionService) { }
 
     public AddTransactionPage(TransactionService service)
@@ -17,6 +19,30 @@ public partial class AddTransactionPage : ContentPage
         InitializeComponent();
         _service = service;
 
+        SetupValidation();
+    }
+
+    // For Edit mode
+    public AddTransactionPage(TransactionService service, Transaction transaction) : this(service)
+    {
+        _editingTransaction = transaction;
+
+        // Pre-fill existing transaction values
+        accountEntry.Text = transaction.AccountName;
+        amountEntry.Text = (transaction.Debit > 0 ? transaction.Debit : transaction.Credit).ToString();
+        remarksEntry.Text = transaction.Remarks ?? string.Empty;
+        datePicker.Date = transaction.Date ?? DateTime.Today;
+
+        if (transaction.Debit > 0)
+            DebitRadio.IsChecked = true;
+        else if (transaction.Credit > 0)
+            CreditRadio.IsChecked = true;
+
+        recordButton.Text = "Update Record"; // Show edit mode
+    }
+
+    private void SetupValidation()
+    {
         // Remarks max length validation
         remarksEntry.TextChanged += (s, e) =>
         {
@@ -116,31 +142,40 @@ public partial class AddTransactionPage : ContentPage
 
         if (hasError) return;
 
-        // Create transaction
-        var transaction = new Transaction
+        if (_editingTransaction != null)
         {
-            Date = selectedDate,
-            AccountName = accountEntry.Text,
-            Debit = transactionType == "Debit" ? amount : 0,
-            Credit = transactionType == "Credit" ? amount : 0,
-            Remarks = remarksEntry.Text
-        };
+            // Update existing transaction
+            _editingTransaction.Date = selectedDate;
+            _editingTransaction.AccountName = accountEntry.Text;
+            _editingTransaction.Debit = transactionType == "Debit" ? amount : 0;
+            _editingTransaction.Credit = transactionType == "Credit" ? amount : 0;
+            _editingTransaction.Remarks = string.IsNullOrWhiteSpace(remarksEntry.Text) ? string.Empty : remarksEntry.Text;
 
-        await _service.SaveTransactionAsync(transaction);
+            _service.UpdateTransaction(_editingTransaction);
 
-        await DisplayAlert("✅ Transaction Added!",
-            $"Account: {transaction.AccountName}\nType: {transactionType}\nAmount: {amount}\nDate: {transaction.Date:dd MMM yyyy}",
-            "Awesome!");
+            await DisplayAlert("✅ Transaction Updated",
+                $"Account: {_editingTransaction.AccountName}\nType: {transactionType}\nAmount: {amount}\nDate: {_editingTransaction.Date:dd MMM yyyy}",
+                "OK");
+        }
+        else
+        {
+            // Add new transaction
+            var transaction = new Transaction
+            {
+                Date = selectedDate,
+                AccountName = accountEntry.Text,
+                Debit = transactionType == "Debit" ? amount : 0,
+                Credit = transactionType == "Credit" ? amount : 0,
+                Remarks = string.IsNullOrWhiteSpace(remarksEntry.Text) ? string.Empty : remarksEntry.Text
+            };
 
-        // Reset form
-        accountEntry.Text = string.Empty;
-        amountEntry.Text = string.Empty;
-        remarksEntry.Text = string.Empty;
-        CreditRadio.IsChecked = DebitRadio.IsChecked = false;
-        CreditRadioFrame.BackgroundColor = Color.FromArgb("#E0D9FF");
-        DebitRadioFrame.BackgroundColor = Color.FromArgb("#FFE0F0");
-        CreditRadio.TextColor = Color.FromArgb("#4E56C0");
-        DebitRadio.TextColor = Color.FromArgb("#4E56C0");
-        datePicker.Date = DateTime.Today;
+            await _service.SaveTransactionAsync(transaction);
+
+            await DisplayAlert("✅ Transaction Added",
+                $"Account: {transaction.AccountName}\nType: {transactionType}\nAmount: {amount}\nDate: {transaction.Date:dd MMM yyyy}",
+                "OK");
+        }
+
+        await Navigation.PopAsync(); // Return to transaction list
     }
 }

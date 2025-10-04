@@ -20,28 +20,27 @@ public class TransactionService
 
     public void UpdateTransaction(Transaction transaction)
     {
-        var existing = _transactions.FirstOrDefault(t => t.Id == transaction.Id);
-        if (existing != null)
+        // Find the index of the existing transaction
+        var index = _transactions.IndexOf(_transactions.FirstOrDefault(t => t.Id == transaction.Id));
+        if (index >= 0)
         {
-            existing.Date = transaction.Date ?? System.DateTime.Today;
-            existing.AccountName = transaction.AccountName;
-            existing.Debit = transaction.Debit;
-            existing.Credit = transaction.Credit;
-            existing.Remarks = transaction.Remarks;
+            // Replace the object in collection so UI refreshes automatically
+            _transactions[index] = transaction;
         }
     }
 
-    public void DeleteTransaction(int id)
+    public void DeleteTransaction(Transaction transaction)
     {
-        var transaction = _transactions.FirstOrDefault(t => t.Id == id);
-        if (transaction != null)
-            _transactions.Remove(transaction);
+        _transactions.Remove(transaction);
     }
 
-    // Async wrapper for Add (optional)
     public Task SaveTransactionAsync(Transaction transaction)
     {
-        AddTransaction(transaction);
+        if (transaction.Id == 0)
+            AddTransaction(transaction);
+        else
+            UpdateTransaction(transaction);
+
         return Task.CompletedTask;
     }
 }

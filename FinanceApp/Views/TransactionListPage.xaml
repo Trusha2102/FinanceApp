@@ -2,12 +2,80 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FinanceApp.Views.TransactionListPage"
-             BackgroundColor="White">
-    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-        <Label Text="Transaction List (Coming Soon)" 
-               FontSize="20" 
-               TextColor="#4E56C0"
-               HorizontalOptions="Center"
-               VerticalOptions="Center"/>
-    </StackLayout>
+             BackgroundColor="#FDCFFA"
+             Title="Transactions">
+
+    <CollectionView x:Name="TransactionsCollectionView"
+                    ItemsSource="{Binding Transactions}"
+                    SelectionMode="None"
+                    Margin="10">
+
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Frame Padding="10"
+                       Margin="5"
+                       BackgroundColor="White"
+                       BorderColor="#9B5DE0"
+                       CornerRadius="8"
+                       HasShadow="True">
+
+                    <Grid ColumnDefinitions="*, Auto">
+                        <!-- Left side info -->
+                        <StackLayout Orientation="Vertical"
+                                     Spacing="2"
+                                     Grid.Column="0">
+
+                            <!-- Account Name -->
+                            <Label Text="{Binding AccountName}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="#4E56C0"/>
+
+                            <!-- Date -->
+                            <Label Text="{Binding Date, StringFormat='{0:dd MMM yyyy}'}"
+                                   FontSize="14"
+                                   TextColor="#4E56C0"/>
+
+                            <!-- Amounts -->
+                            <StackLayout Orientation="Horizontal" Spacing="10">
+                                <Label Text="{Binding Debit, StringFormat='Debit: {0:C}'}"
+                                       FontSize="14"
+                                       TextColor="#FF4C4C"
+                                       IsVisible="{Binding Debit, Converter={StaticResource ZeroToBoolConverter}}"/>
+                                <Label Text="{Binding Credit, StringFormat='Credit: {0:C}'}"
+                                       FontSize="14"
+                                       TextColor="#4CAF50"
+                                       IsVisible="{Binding Credit, Converter={StaticResource ZeroToBoolConverter}}"/>
+                            </StackLayout>
+
+                            <!-- Remarks -->
+                            <Label Text="{Binding Remarks}"
+                                   FontSize="12"
+                                   TextColor="#4E56C0"/>
+                        </StackLayout>
+
+                        <!-- Right side buttons -->
+                        <StackLayout Grid.Column="1"
+                                     Orientation="Vertical"
+                                     HorizontalOptions="End"
+                                     VerticalOptions="Center"
+                                     Spacing="5">
+                            <Button Text="Edit"
+                                    BackgroundColor="#9B5DE0"
+                                    TextColor="White"
+                                    CornerRadius="5"
+                                    HeightRequest="30"
+                                    Clicked="OnEditClicked"/>
+                            <Button Text="Delete"
+                                    BackgroundColor="#D78FEE"
+                                    TextColor="White"
+                                    CornerRadius="5"
+                                    HeightRequest="30"
+                                    Clicked="OnDeleteClicked"/>
+                        </StackLayout>
+                    </Grid>
+                </Frame>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
 </ContentPage>
