@@ -2,37 +2,50 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FinanceApp.Views.TrialBalancePage"
-             BackgroundColor="#FDFDFD">
+             BackgroundColor="#FDCFFA"
+             Title="Trial Balance">
 
-    <StackLayout Padding="20" Spacing="10">
-        <Label Text="Trial Balance"
-               FontSize="24"
-               FontAttributes="Bold"
-               HorizontalOptions="Center"
-               TextColor="#4E56C0" />
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="10">
 
-        <CollectionView x:Name="trialBalanceCollectionView"
-                        SelectionMode="None">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="80" />
-                            <ColumnDefinition Width="80" />
-                        </Grid.ColumnDefinitions>
+            <!-- Title -->
+            <Label Text="Trial Balance" FontSize="24" FontAttributes="Bold"
+                   HorizontalOptions="Center" TextColor="#4E56C0" />
 
-                        <Label Text="{Binding AccountName}" Grid.Column="0"/>
-                        <Label Text="{Binding TotalDebit}" Grid.Column="1"/>
-                        <Label Text="{Binding TotalCredit}" Grid.Column="2"/>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+            <!-- Table Header -->
+            <Grid ColumnDefinitions="2*,1*,1*" ColumnSpacing="20" Padding="5">
+                <Label Text="Account Name" FontAttributes="Bold" TextColor="#4E56C0"/>
+                <Label Text="Debit (Dr)" FontAttributes="Bold" TextColor="#FF4C4C" Grid.Column="1" HorizontalTextAlignment="End"/>
+                <Label Text="Credit (Cr)" FontAttributes="Bold" TextColor="#4CAF50" Grid.Column="2" HorizontalTextAlignment="End"/>
+            </Grid>
 
-        <Label x:Name="balanceStatusLabel"
-               FontSize="18"
-               HorizontalOptions="Center"
-               TextColor="#4E56C0"/>
-    </StackLayout>
+            <!-- Account rows -->
+            <CollectionView x:Name="AccountsCollectionView"
+                            ItemsSource="{Binding AccountBalances}"
+                            SelectionMode="None"
+                            Margin="0">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="2*,1*,1*" ColumnSpacing="20" Padding="5">
+                            <Label Text="{Binding AccountName}" TextColor="#4E56C0"/>
+                            <Label Text="{Binding TotalDebit, StringFormat='{0:C}'}" TextColor="#FF4C4C" Grid.Column="1" HorizontalTextAlignment="End"/>
+                            <Label Text="{Binding TotalCredit, StringFormat='{0:C}'}" TextColor="#4CAF50" Grid.Column="2" HorizontalTextAlignment="End"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Totals -->
+            <Grid ColumnDefinitions="2*,1*,1*" ColumnSpacing="20" Padding="5" BackgroundColor="#E0D9FF">
+                <Label Text="Total" FontAttributes="Bold" TextColor="#4E56C0"/>
+                <Label Text="{Binding TotalDebit, StringFormat='{0:C}'}" TextColor="#FF4C4C" Grid.Column="1" HorizontalTextAlignment="End"/>
+                <Label Text="{Binding TotalCredit, StringFormat='{0:C}'}" TextColor="#4CAF50" Grid.Column="2" HorizontalTextAlignment="End"/>
+            </Grid>
+
+            <!-- Current Balance / Status -->
+            <Label x:Name="BalanceStatusLabel" FontSize="16" FontAttributes="Bold" 
+                   HorizontalOptions="Center" TextColor="#4E56C0" />
+
+        </StackLayout>
+    </ScrollView>
 </ContentPage>
