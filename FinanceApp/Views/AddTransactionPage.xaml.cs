@@ -151,6 +151,9 @@ public partial class AddTransactionPage : ContentPage
             await DisplayAlert("✅ Transaction Updated",
                 $"Account: {_editingTransaction.AccountName}\nType: {transactionType}\nAmount: {amount}\nDate: {_editingTransaction.Date:dd MMM yyyy}",
                 "OK");
+
+            // Only for edit mode: go back to Transaction List
+            await Navigation.PopAsync();
         }
         else
         {
@@ -169,7 +172,18 @@ public partial class AddTransactionPage : ContentPage
             await DisplayAlert("✅ Transaction Added",
                 $"Account: {transaction.AccountName}\nType: {transactionType}\nAmount: {amount}\nDate: {transaction.Date:dd MMM yyyy}",
                 "OK");
+
+            // Only for Add mode: clear fields for next input
+            accountEntry.Text = string.Empty;
+            amountEntry.Text = string.Empty;
+            remarksEntry.Text = string.Empty;
+            DebitRadio.IsChecked = false;
+            CreditRadio.IsChecked = false;
+            datePicker.Date = DateTime.Today;
+
+            accountEntry.Focus(); // optional: focus first field
         }
+
 
         await Navigation.PopAsync(); // return to list
     }
