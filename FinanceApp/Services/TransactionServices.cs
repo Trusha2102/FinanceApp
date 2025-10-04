@@ -38,7 +38,9 @@ public class TransactionService
 
     public Task SaveTransactionAsync(Transaction transaction)
     {
+        transaction.Id = _nextId++;
         _transactions.Add(transaction);
         return Task.CompletedTask;
     }
+
 }

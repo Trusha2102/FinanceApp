@@ -139,7 +139,7 @@ public partial class AddTransactionPage : ContentPage
 
         if (_editingTransaction != null)
         {
-            // Update transaction
+            // Edit mode: update transaction and close page
             _editingTransaction.Date = selectedDate;
             _editingTransaction.AccountName = accountEntry.Text;
             _editingTransaction.Debit = transactionType == "Debit" ? amount : 0;
@@ -152,12 +152,11 @@ public partial class AddTransactionPage : ContentPage
                 $"Account: {_editingTransaction.AccountName}\nType: {transactionType}\nAmount: {amount}\nDate: {_editingTransaction.Date:dd MMM yyyy}",
                 "OK");
 
-            // Only for edit mode: go back to Transaction List
             await Navigation.PopAsync();
         }
         else
         {
-            // Add new
+            // Add mode: save transaction and clear fields
             var transaction = new Transaction
             {
                 Date = selectedDate,
@@ -173,18 +172,14 @@ public partial class AddTransactionPage : ContentPage
                 $"Account: {transaction.AccountName}\nType: {transactionType}\nAmount: {amount}\nDate: {transaction.Date:dd MMM yyyy}",
                 "OK");
 
-            // Only for Add mode: clear fields for next input
+            // Clear input fields for next entry
             accountEntry.Text = string.Empty;
             amountEntry.Text = string.Empty;
             remarksEntry.Text = string.Empty;
             DebitRadio.IsChecked = false;
             CreditRadio.IsChecked = false;
             datePicker.Date = DateTime.Today;
-
-            accountEntry.Focus(); // optional: focus first field
+            accountEntry.Focus();
         }
-
-
-        await Navigation.PopAsync(); // return to list
     }
 }
